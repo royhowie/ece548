@@ -1,0 +1,74 @@
+For reference, here are the first 28 triangular numbers:
+    1, 3, 6, 10, 15, 21, 28, 36, 45, 55,
+    66, 78, 91, 105, 120, 136, 153, 171, 190, 210,
+    231, 253, 276, 300, 325, 351, 378, 406
+
+Suppose attrib = { x, y, z } and order = 2, then the (5 choose 2) = 10
+weights would be:
+
+    0   c       5   xy
+    1   x       6   xz
+    2   y       7   yy
+    3   z       8   yz
+    4   xx      9   zz
+
+The trick is to notice that, to prevent duplicate representations, the
+conjunctions of attributes are monotonic. That is, `xx` makes sense, but
+`yx` does not. This is because `xy` ~ `yx`, so we choose the
+non-strictly increasing monotonic sequence as the class representative.
+
+For example, if attrib = { x, y, z } and order = 3, then the 20 weights
+would be:
+
+    0   c       10  xxx     111
+    1   x       11  xxy     112
+    2   y       12  xxz     113
+    3   z       13  xyy     122
+    4   xx      14  xyz     123
+    5   xy      15  xzz     133
+    6   xz      16  yyy     222
+    7   yy      17  yyz     223
+    8   yz      18  yzz     233
+    9   zz      19  zzz     333
+
+The key is to then note how the polynomials of different orders fall
+into buckets. Here is the breakdown of the 3rd order polynomial:
+
+    order   start   stop    num = stop - start + 1
+    0       0       0       1
+    1       1       3       3
+    2       4       9       6
+    3       10      19      10
+
+The sequence 1, 3, 6, 10... should ring some bells. They are triangular
+numbers, meaning they are the sum of the first i natural numbers, i.e.,
+
+    T(n) = 1 + 2 + ... + n = n_choose_r(n + 1, 2)
+
+So simply consider the class representatives as numbers in base `order`.
+Ignore the constant since it always maps to the 0th weight. Here is
+how the first example of a polynomial of order 2 is mapped:
+
+    0   c   =>  0       5   xy  =>  12
+    1   x   =>  1       6   xz  =>  13
+    2   y   =>  2       7   yy  =>  22
+    3   z   =>  3       8   yz  =>  23
+    4   xx  =>  11      9   zz  =>  33
+
+To generate these polynomials, we will first generate arrays of the form
+
+    { seq_len, 1, 1, 1, ..., 1 }
+
+where there are `seq_len` 1s.
+
+Next, we will roll through the arrays like a slot machine. Considering the same
+example as before (order=2, variables=3), represent the polynomials as numbers:
+
+    11, 12, 13, 22, 23, 33
+
+Think of them as numbers in base 3. We can easily find the next polynomial by
+adding 1 to the last digit. But since we're working in base 3, if that last
+digit is equal to 3, then we roll the addition over to the previous digit. That
+is, 13 would go to 22, not 14. Since the sequence is monotonic, the trick is to
+make sure any digits which follow the one you increased are equal to the digit
+you changed.

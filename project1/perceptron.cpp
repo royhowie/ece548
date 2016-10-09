@@ -55,6 +55,22 @@ private:
     double *weights;
     unsigned **map;
 
+    /*
+        Since Perceptron will handle polynomials of arbitrary degree*, we will
+        need to construct a map to tell us which weights correspond to which
+        attributes. The trick is to use triangular numbers to break down the
+        polynomial of order N into polynomials of order 0, 1, 2, ..., N.
+
+        For example, x1 * x1 would be represented as { 2, 1, 1 } since it is of
+        order 2 and it represents the first attribute times the first attribute.
+        Similarly, x1 * x2 would be represented as { 2, 1, 2 }.
+
+        The method includes a detailed explanation in the body. For a different
+        explanation, see project1/map_explanation.txt.
+
+        * in this case, only up to 28 because those are the only trianglular
+        numbers I calculated and because 28 itself is already excessive.
+    */
     unsigned ** construct_map (int length) {
         int triangle_numbers[28] = {
             1, 3, 6, 10, 15,
@@ -210,7 +226,3 @@ private:
         return result;
     }
 };
-
-int main () {
-    Perceptron p(3, 3, 0.2);
-}
