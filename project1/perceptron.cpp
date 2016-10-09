@@ -23,7 +23,7 @@ public:
         delete[] map;
     }
 
-    void learn (const bool attr_vector[], bool classification) {
+    void learn (const double attr_vector[], bool classification) {
         learning_sessions++;
 
         bool hypothesis = sum(attr_vector) > 0;
@@ -37,10 +37,8 @@ public:
         // so the weights should be pulled upwards.
         double adjustment = hypothesis ? -learning_factor : learning_factor;
 
-        weights[0] += adjustment;
-        for (int i = 1; i < num_weights; i++) {
-            if (include_weight_at_index(attr_vector, i))
-                weights[i] += adjustment;
+        for (int i = 0; i < num_weights; i++) {
+            weights[i] += adjustment * weight_inclusion(attr_vector, i);
         }
     }
 
@@ -177,7 +175,7 @@ private:
         return w;
     }
 
-    bool include_weight_at_index (const bool attrib[], int index) {
+    bool weight_inclusion (const double attrib[], int index) {
         /*
             Recall that map is of the form
 
@@ -189,25 +187,22 @@ private:
             of the attributes located at these indices.
 
             For example, if we're working with order=2 and attributes=3, then
-            map[5] = { 2, 1, 2 } to represent `xy`. So we want to return x && y.
-            In this case, that is represented by attrib[0] && attrib[1].
+            map[5] = { 2, 1, 2 } to represent `xy`. So we want to return x * y.
+            In this case, that is represented by attrib[0] * attrib[1].
 
-            Since the operation is conjunction, every attrib[i] specified in
-            map[index] must be true, so this is the same as looping and checking
-            that each attrib is true, or otherwise short-circuiting and
-            returning false.
+            Simply perform the product specified by map[index].
         */
+        double product = 1.0;
 
-        // The constant weight is always included, so guard for that condition.
-        if (index == 0) return true;
+        // The constant (w0) is always included in learning.
+        if (index == 0) return 1.0;
 
         for (int i = 1; i <= map[index][0]; i++) {
             int attrib_index = map[index][i] - 1;
-            if (!attrib[attrib_index])
-                return false;
+            product *= attrib[attrib_index];
         }
 
-        return true;
+        return product;
     }
 
     double sum (const bool attr_vector[]) {
