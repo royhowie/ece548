@@ -1,3 +1,5 @@
+#include <random>
+
 class Perceptron {
 public:
     Perceptron (int attr, int ord, double lf) {
@@ -10,7 +12,7 @@ public:
         // For example, if the attribute vector is of length 3 and we are
         // searching for a linear solution, then there will be 4 weights.
         num_weights = n_choose_r(num_attr + ord, ord);
-        weights = new double[num_weights];
+        weights = random_weights(num_weights);
         map = construct_map(num_weights);
     }
 
@@ -155,6 +157,24 @@ private:
         // }
 
         return map;
+    }
+
+    /*
+        Initialize weights as an array of doubles from (0, 1). See
+        http://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
+        for further details.
+    */
+    double * random_weights (int length) {
+        double * w = new double[length];
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> dis(0.0, 1.0);
+
+        for (int i = 0; i < length; i++)
+            w[i] = dis(gen);
+
+        return w;
     }
 
     bool include_weight_at_index (const bool attrib[], int index) {
