@@ -1,0 +1,6 @@
+Group 10
+
+Experimenting with selected domains from the UCI repository, compare the
+behavior of linear and polynomial classifiers (using the perceptron learning).
+Observe how the former wins in simple domains, and the latter in highly
+non-linear domains.
