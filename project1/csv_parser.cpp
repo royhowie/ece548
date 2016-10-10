@@ -12,7 +12,7 @@
 class CSVParser {
 public:
     std::unordered_map<std::string, int> classifications;
-    std::vector<AttributeVector> parsed_data;
+    std::vector<AttributeVector*> parsed_data;
 
     CSVParser (std::string file_name, int attribs) {
         csv_data.open(file_name);
@@ -53,7 +53,7 @@ public:
             }
 
             parsed_data.push_back(
-                AttributeVector(line_data, class_name_value)
+                new AttributeVector(line_data, class_name_value)
             );
         }
     }

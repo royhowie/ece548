@@ -1,5 +1,6 @@
 #include <iostream>
 #include "dataset.cpp"
+#include <vector>
 // #include "perceptron.cpp"
 
 int main () {
@@ -13,7 +14,7 @@ int main () {
 
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << data[i][j] << "\t";
+            std::cout << (*data[i])[j] << "\t";
             // data[i][j] = 0;
         }
         std::cout << std::endl;
@@ -25,7 +26,7 @@ int main () {
 
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 4; j++)
-            std::cout << data[i][j] << "\t";
+            std::cout << (*data[i])[j] << "\t";
         std::cout << std::endl;
     }
 }
