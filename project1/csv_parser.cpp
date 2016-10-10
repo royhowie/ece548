@@ -3,58 +3,58 @@
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
+#include <unordered_map>
 
-class AttributeVector {
-public:
-    AttributeVector (std::vector<std::string> attributes, bool c) {
-        is_class = c;
-        for (auto const& value: attributes) {
-            data.push_back(std::atof(value.c_str()));
-        }
-    }
-    double const& operator [] (std::size_t index) const {
-        return data[index];
-    }
-    std::size_t size() const {
-        return data.size();
-    }
-private:
-    std::vector<double> data;
-    bool is_class;
-};
+#include "attribute_vector.cpp"
 
 class CSVParser {
 public:
-    CSVParser (std::string file_name, int attrib) {
+    std::unordered_map<std::string, int> classifications;
+    std::vector<AttributeVector> parsed_data;
+
+    CSVParser (std::string file_name, int attribs) {
         csv_data.open(file_name);
-        attributes = attrib;
+        num_attr = attribs;
     }
 
-    std::vector<AttributeVector> parse (std::string class_name) {
+    void parse () {
         std::string line;
-        std::vector<AttributeVector> parsed_data;
 
+        // While the file has lines, read a line into `line`
         while (std::getline(csv_data, line)) {
             std::vector<std::string> line_data;
             std::stringstream line_stream(line);
             std::string cell;
 
-            for (int i = 0; i < attributes; i++) {
+            // Delimit the line by commas and read the attributes.
+            for (int i = 0; i < num_attr; i++) {
                 std::getline(line_stream, cell, ',');
                 line_data.push_back(cell);
             }
 
-            // check whether the last entry is the correct class
+            // Read in the class name.
             std::getline(line_stream, cell, ',');
 
-            AttributeVector v (line_data, 0 == class_name.compare(cell));
+            int class_name_value;
+            auto search = classifications.find(cell);
+            // If the class name is not in our map, pair it with the current
+            // size of the map. This has the effect of assigning unique,
+            // numeric class identifiers to each class name.
+            if (search == classifications.end()) {
+                class_name_value = classifications.size();
+                classifications.insert(std::make_pair(cell, class_name_value));
+            // Otherwise, record the class name's identifier.
+            } else {
+                class_name_value = search->second;
+            }
 
-            parsed_data.push_back(v);
+            parsed_data.push_back(
+                AttributeVector(line_data, class_name_value)
+            );
         }
-
-        return parsed_data;
     }
+
 private:
+    int num_attr;
     std::ifstream csv_data;
-    int attributes;
 };
