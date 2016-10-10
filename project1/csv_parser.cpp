@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <string>
 #include <fstream>
@@ -23,6 +25,7 @@ public:
         // While the file has lines, read a line into `line`
         while (std::getline(csv_data, line)) {
             std::vector<std::string> line_data;
+            // std::vector<double> line_data;
             std::stringstream line_stream(line);
             std::string cell;
 
@@ -30,6 +33,7 @@ public:
             for (int i = 0; i < num_attr; i++) {
                 std::getline(line_stream, cell, ',');
                 line_data.push_back(cell);
+                // line_data.push_back(atof(cell.c_str()));
             }
 
             // Read in the class name.
