@@ -17,9 +17,14 @@ public:
     CSVParser (std::string file_name, int attribs) {
         csv_data.open(file_name);
         num_attr = attribs;
+        has_parsed = false;
     }
 
     void parse () {
+        // Only parse once.
+        if (has_parsed) return;
+
+        has_parsed = true;
         std::string line;
 
         // While the file has lines, read a line into `line`
@@ -60,5 +65,6 @@ public:
 
 private:
     int num_attr;
+    bool has_parsed;
     std::ifstream csv_data;
 };
