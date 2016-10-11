@@ -46,6 +46,9 @@ public:
         return sum(attr_vector) > 0;
     }
 
+    int num_weights () { return num_weights; }
+    double* get_weights () { return weights; }
+
 private:
     int num_attr;
     int order;
