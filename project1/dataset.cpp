@@ -2,9 +2,8 @@
 
 #include <algorithm>
 #include <float.h>
+#include <random>
 #include <vector>
-
-#include <iostream>
 
 #include "attribute_vector.cpp"
 #include "csv_parser.cpp"
@@ -21,6 +20,12 @@ public:
         data = p.parsed_data;
         classifications = p.classifications;
         has_scaled = false;
+    }
+
+    ~DataSet () {
+        for (int i = 0; i < data.size(); i++)
+            delete data[i];
+        data.clear();
     }
 
     void scale () {
@@ -53,6 +58,25 @@ public:
             for (int j = 0; j < data.size(); j++) {
                 (*data[j])[i] = ((*data[j])[i] - min_val) / denom;
             }
+        }
+    }
+
+    // Knuth-Yates Unbiased Shuffle
+    void shuffle () {
+        std::random_device rd;
+        int len = data.size(), t, i;
+
+        while (len > 0) {
+            // Pick an index from 0 to len - 1. Post-fix decrement len so that
+            // it can be used as an array index for the last element. Also,
+            // decrementing is required for maintenance, so that the algorithm
+            // only picks an element once.
+            int pick_index = rd() % len--;
+
+            // Swap the last element with the element at `pick_index`
+            auto target = data[pick_index];
+            data[pick_index] = data[len];
+            data[len] = target;
         }
     }
 
