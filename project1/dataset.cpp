@@ -28,7 +28,8 @@ public:
         data.clear();
     }
 
-    int num_attr () { return num_attr; }
+    int get_num_attr () { return num_attr; }
+    int num_classes () { return classifications.size(); }
 
     void scale () {
         // Only scale once.
