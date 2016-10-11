@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <limits.h>
 
 #include "dataset.cpp"
 #include "perceptron.cpp"
@@ -44,7 +45,7 @@ public:
             int correct = 0;
             int incorrect = 0;
             for (int j = bound; j < size; j++) {
-                int max_sum = -INT_MAX;
+                int max_sum = INT_MIN;
                 int max_index = 0;
 
                 AttributeVector* v = data_set->data[j];
