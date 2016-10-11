@@ -18,7 +18,13 @@ public:
         csv_data.open(file_name);
         num_attr = attribs;
         has_parsed = false;
+        line_delimiter = ',';
     }
+
+    CSVParser (std::string fn, int a, char delim): CSVParser(fn, a) {
+        line_delimiter = delim;
+    }
+
 
     void parse () {
         // Only parse once.
@@ -36,7 +42,7 @@ public:
 
             // Delimit the line by commas and read the attributes.
             for (int i = 0; i < num_attr; i++) {
-                std::getline(line_stream, cell, ',');
+                std::getline(line_stream, cell, line_delimiter);
                 line_data.push_back(cell);
                 // line_data.push_back(atof(cell.c_str()));
             }
@@ -64,7 +70,8 @@ public:
     }
 
 private:
-    int num_attr;
-    bool has_parsed;
     std::ifstream csv_data;
+    char line_delimiter;
+    bool has_parsed;
+    int num_attr;
 };
