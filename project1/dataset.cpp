@@ -28,6 +28,8 @@ public:
         data.clear();
     }
 
+    int num_attr () { return num_attr; }
+
     void scale () {
         // Only scale once.
         if (has_scaled) return;
