@@ -15,16 +15,20 @@ public:
     std::unordered_map<std::string, int> classifications;
 
     DataSet (CSVParser& p, int attribs) {
-        num_attr = attribs;
-
         p.parse();
 
+        num_attr = attribs;
         data = p.parsed_data;
-
         classifications = p.classifications;
+        has_scaled = false;
     }
 
     void scale () {
+        // Only scale once.
+        if (has_scaled) return;
+
+        has_scaled = true;
+
         // Loop through each column in the data set.
         for (int i = 0; i < num_attr; i++) {
             double min_val = DBL_MAX;
@@ -53,5 +57,6 @@ public:
     }
 
 private:
+    bool has_scaled;
     int num_attr;
 };
