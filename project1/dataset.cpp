@@ -23,9 +23,9 @@ public:
     }
 
     ~DataSet () {
-        for (int i = 0; i < data.size(); i++)
-            delete data[i];
-        data.clear();
+        // for (int i = 0; i < data.size(); i++)
+        //     delete data[i];
+        // data.clear();
     }
 
     int get_num_attr () { return num_attr; }

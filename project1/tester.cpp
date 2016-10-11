@@ -19,18 +19,19 @@ public:
     }
 
     ~Tester () {
-        for (int i = 0; i < machines.size(); i++)
-            delete machines[i];
-        machines.clear();
+        // for (int i = 0; i < machines.size(); i++)
+        //     delete machines[i];
+        // machines.clear();
     }
 
     void test (int epochs) {
         int size = data_set->data.size();
         int bound = size / 2;
 
+        std::cout<<"epoch#,correct,incorrect,error_rate" << std::endl;
         // Each perceptron will be exposed to `epochs` and tested after each.
         for (int i = 0; i < epochs; i++) {
-            std::cout << "epoch#" << i << std::endl;
+            std::cout << i << ",";
             // Learn on the first half of the data.
             for (int j = 0; j < bound; j++) {
                 for (int k = 0; k < machines.size(); k++) {
@@ -63,8 +64,11 @@ public:
                     incorrect++;
             }
 
-            std::cout << "correct: " << correct << " incorrect: "
-                << incorrect << std::endl;
+            double error_rate = double(incorrect) / (correct + incorrect);
+
+            std::cout << correct << ",";
+            std::cout << incorrect << ",";
+            std::cout << error_rate << std::endl;
         }
     }
 private:
