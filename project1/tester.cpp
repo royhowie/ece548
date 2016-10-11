@@ -1,32 +1,74 @@
 #include <iostream>
-#include "dataset.cpp"
 #include <vector>
-// #include "perceptron.cpp"
 
-int main () {
-    CSVParser p("data/bezdekIris.data.txt", 4);
-    DataSet d(p, 4);
+#include "dataset.cpp"
+#include "perceptron.cpp"
 
-    auto data = d.data;
+class Tester {
+public:
+    Tester (DataSet& ds, int ord, double learning_factor) {
+        data_set = &ds;
+        order = ord;
+        int attrib = data_set->get_num_attr();
 
-    // std::cout << "size: " << data.size() << std::endl;
-    std::cout << "items before scaling:" << std::endl;
-
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 4; j++) {
-            std::cout << (*data[i])[j] << "\t";
-            // data[i][j] = 0;
+        for (int i = 0; i < data_set->num_classes(); i++) {
+            machines.push_back(
+                new Perceptron(attrib, order, learning_factor)
+            );
         }
-        std::cout << std::endl;
     }
 
-    std::cout << "items after scaling:" << std::endl;
-
-    d.scale();
-
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 4; j++)
-            std::cout << (*data[i])[j] << "\t";
-        std::cout << std::endl;
+    ~Tester () {
+        for (int i = 0; i < machines.size(); i++)
+            delete machines[i];
+        machines.clear();
     }
-}
+
+    void test (int epochs) {
+        int size = data_set->data.size();
+        int bound = size / 2;
+
+        // Each perceptron will be exposed to `epochs` and tested after each.
+        for (int i = 0; i < epochs; i++) {
+            std::cout << "epoch#" << i << std::endl;
+            // Learn on the first half of the data.
+            for (int j = 0; j < bound; j++) {
+                for (int k = 0; k < machines.size(); k++) {
+                    auto v = (data_set->data)[j];
+                    machines[k]->learn(v, v->get_class_id() == k);
+                }
+            }
+
+            // Test on the second half of the data.
+            int correct = 0;
+            int incorrect = 0;
+            for (int j = bound; j < size; j++) {
+                int max_sum = -INT_MAX;
+                int max_index = 0;
+
+                AttributeVector* v = data_set->data[j];
+
+                for (int k = 0; k < machines.size(); k++) {
+                    double result = machines[k]->test(v);
+
+                    if (result >= max_sum) {
+                        max_sum = result;
+                        max_index = k;
+                    }
+                }
+
+                if (max_index == v->get_class_id())
+                    correct++;
+                else
+                    incorrect++;
+            }
+
+            std::cout << "correct: " << correct << " incorrect: "
+                << incorrect << std::endl;
+        }
+    }
+private:
+    int order;
+    DataSet* data_set;
+    std::vector<Perceptron*> machines;
+};
