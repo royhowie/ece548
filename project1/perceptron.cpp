@@ -42,7 +42,7 @@ public:
         }
     }
 
-    bool test (const bool attr_vector[]) {
+    bool test (const double attr_vector[]) {
         return sum(attr_vector) > 0;
     }
 
@@ -175,7 +175,7 @@ private:
         return w;
     }
 
-    bool weight_inclusion (const double attrib[], int index) {
+    double weight_inclusion (const double attr_vector[], int index) {
         /*
             Recall that map is of the form
 
@@ -199,18 +199,17 @@ private:
 
         for (int i = 1; i <= map[index][0]; i++) {
             int attrib_index = map[index][i] - 1;
-            product *= attrib[attrib_index];
+            product *= attr_vector[attrib_index];
         }
 
         return product;
     }
 
-    double sum (const bool attr_vector[]) {
+    double sum (const double attr_vector[]) {
         double total = weights[0];
 
         for (int i = 1; i < num_weights; i++) {
-            if (include_weight_at_index(attr_vector, i))
-                total += weights[i];
+            total += weights[i] * weight_inclusion(attr_vector, i);
         }
 
         return total;
