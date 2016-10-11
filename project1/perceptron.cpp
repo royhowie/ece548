@@ -1,4 +1,5 @@
 #include <random>
+#include "attribute_vector.cpp"
 
 class Perceptron {
 public:
@@ -23,10 +24,10 @@ public:
         delete[] map;
     }
 
-    void learn (const double attr_vector[], bool classification) {
+    void learn (AttributeVector* v, bool classification) {
         learning_sessions++;
 
-        bool hypothesis = sum(attr_vector) > 0;
+        bool hypothesis = sum(v) > 0.0;
 
         // If perceptron was correct, there is no need to update weights.
         if (hypothesis == classification) return;
@@ -38,15 +39,13 @@ public:
         double adjustment = hypothesis ? -learning_factor : learning_factor;
 
         for (int i = 0; i < num_weights; i++) {
-            weights[i] += adjustment * weight_inclusion(attr_vector, i);
+            weights[i] += adjustment * weight_inclusion(v, i);
         }
     }
 
-    bool test (const double attr_vector[]) {
-        return sum(attr_vector) > 0;
-    }
+    double test (AttributeVector* v) { return sum(v); }
 
-    int num_weights () { return num_weights; }
+    int get_num_weights () { return num_weights; }
     double* get_weights () { return weights; }
 
 private:
@@ -56,7 +55,7 @@ private:
     long learning_sessions;
     int num_weights;
     double *weights;
-    unsigned **map;
+    int **map;
 
     /*
         Since Perceptron will handle polynomials of arbitrary degree*, we will
@@ -74,7 +73,7 @@ private:
         * in this case, only up to 28 because those are the only trianglular
         numbers I calculated and because 28 itself is already excessive.
     */
-    unsigned ** construct_map (int length) {
+    int ** construct_map (int length) {
         int triangle_numbers[28] = {
             1, 3, 6, 10, 15,
             21, 28, 36, 45, 55,
@@ -83,16 +82,24 @@ private:
             231, 253, 276, 300, 325,
             351, 378, 406
         };
-        unsigned ** map = new unsigned*[length];
+        int sum_triangle_numbers[28] = {
+            1, 4, 10, 20, 35,
+            56, 84, 120, 165, 220,
+            286, 364, 455, 560, 680,
+            816, 969, 1140, 1330, 1540,
+            1771, 2024, 2300, 2600, 2925,
+            3276, 3654, 4060
+        };
+        int ** map = new int*[length];
 
         int seq_len = 0;
         int encountered = 1;
 
-        map[0] = new unsigned [2]();
+        map[0] = new int [2]();
         map[0][0] = 1;
 
         while (encountered < length) {
-            if (encountered >= triangle_numbers[seq_len])
+            if (encountered >= sum_triangle_numbers[seq_len])
                 seq_len += 1;
 
             /*
@@ -113,10 +120,9 @@ private:
                     { seq_len, 1, 1, 1, ..., 1 }
                 where there are `seq_len` 1s.
             */
-
             int num_polynomials = triangle_numbers[seq_len];
             for (int i = 0; i < num_polynomials; i++) {
-                map[encountered + i] = new unsigned [1 + seq_len];
+                map[encountered + i] = new int [1 + seq_len];
                 map[encountered + i][0] = seq_len;
                 for (int j = 1; j <= seq_len; j++)
                     map[encountered + i][j] = 1;
@@ -139,7 +145,6 @@ private:
 
                 This method is implemented as `increase_array`.
             */
-
             for (int i = 1; i < num_polynomials; i++) {
                 for (int j = 1; j <= seq_len; j++)
                     map[encountered + i][j] = map[encountered + i - 1][j];
@@ -178,7 +183,7 @@ private:
         return w;
     }
 
-    double weight_inclusion (const double attr_vector[], int index) {
+    double weight_inclusion (AttributeVector* v, int index) {
         /*
             Recall that map is of the form
 
@@ -202,24 +207,27 @@ private:
 
         for (int i = 1; i <= map[index][0]; i++) {
             int attrib_index = map[index][i] - 1;
-            product *= attr_vector[attrib_index];
+            product *= (*v)[attrib_index];
         }
 
         return product;
     }
 
-    double sum (const double attr_vector[]) {
+    double sum (AttributeVector* v) {
         double total = weights[0];
 
         for (int i = 1; i < num_weights; i++) {
-            total += weights[i] * weight_inclusion(attr_vector, i);
+            total += weights[i] * weight_inclusion(v, i);
         }
 
         return total;
     }
 
-    static void increase_array (unsigned *arr, int offset, int length, int max) {
-        if (arr[offset] == max)
+    static void increase_array (int *arr, int offset, int length, int max) {
+        // The 0th index stores the length of the array, so do NOT increase it.
+        if (offset < 1) {
+            return;
+        } else if (arr[offset] == max)
             increase_array(arr, offset - 1, length, max);
         else {
             arr[offset] += 1;
