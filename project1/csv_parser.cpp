@@ -25,6 +25,10 @@ public:
         line_delimiter = delim;
     }
 
+    ~CSVParser () {
+        for (int i = 0; i < parsed_data.size(); i++)
+            delete parsed_data[i];
+    }
 
     void parse () {
         // Only parse once.

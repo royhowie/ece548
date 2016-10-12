@@ -20,9 +20,9 @@ public:
     }
 
     ~Tester () {
-        // for (int i = 0; i < machines.size(); i++)
-        //     delete machines[i];
-        // machines.clear();
+        for (int i = 0; i < machines.size(); i++)
+            delete machines[i];
+        machines.clear();
     }
 
     void test (int epochs) {

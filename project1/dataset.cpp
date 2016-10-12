@@ -22,11 +22,7 @@ public:
         has_scaled = false;
     }
 
-    ~DataSet () {
-        // for (int i = 0; i < data.size(); i++)
-        //     delete data[i];
-        // data.clear();
-    }
+    ~DataSet () {}
 
     int get_num_attr () { return num_attr; }
     int num_classes () { return classifications.size(); }
