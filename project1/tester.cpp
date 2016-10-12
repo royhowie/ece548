@@ -29,10 +29,8 @@ public:
         int size = data_set->data.size();
         int bound = size / 2;
 
-        std::cout<<"epoch#,correct,incorrect,error_rate" << std::endl;
         // Each perceptron will be exposed to `epochs` and tested after each.
         for (int i = 0; i < epochs; i++) {
-            std::cout << i << ",";
             // Learn on the first half of the data.
             for (int j = 0; j < bound; j++) {
                 for (int k = 0; k < machines.size(); k++) {
@@ -50,6 +48,7 @@ public:
 
                 AttributeVector* v = data_set->data[j];
 
+                // Test each perceptron. Choose the one with the highest score.
                 for (int k = 0; k < machines.size(); k++) {
                     double result = machines[k]->test(v);
 
@@ -67,8 +66,9 @@ public:
 
             double error_rate = double(incorrect) / (correct + incorrect);
 
-            std::cout << correct << ",";
-            std::cout << incorrect << ",";
+            std::cout << order << ",";
+            // `i` represents the current epoch
+            std::cout << i + 1 << ",";
             std::cout << error_rate << std::endl;
         }
     }
