@@ -1,0 +1,5 @@
+Group 10
+Design an experiment that illustrates the problem with imbalanced class repre-
+sentation (See Section 10.2 in the textbook). To address this problem, use the
+majority-class underampling mechanism based on one-sided selection. For per-
+formance evaluation, use precision and recall discussed in Section 11.2.
