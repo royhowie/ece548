@@ -1,0 +1,27 @@
+{
+  "name": "project2",
+  "version": "1.0.0",
+  "description": "Experiment to illustrate the effects of imbalanced class representation on classifier learning capabilities.",
+  "main": "run.js",
+  "dependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-latest": "^6.16.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/royhowie/ece548.git"
+  },
+  "keywords": [
+    "machine",
+    "learning"
+  ],
+  "author": "Roy Howie",
+  "bugs": {
+    "url": "https://github.com/royhowie/ece548/issues"
+  },
+  "homepage": "https://github.com/royhowie/ece548#readme"
+}
