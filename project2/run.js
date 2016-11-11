@@ -1,30 +1,23 @@
 import DataSet from './dataset.js'
 
+let pairs = [
+    {
+        file: 'data/haberman.txt',
+        opt: { pos_class: '1', neg_class: '2', attributes: 3, delim: ',' }
+    },
+    {
+        file: 'data/transfusion.txt',
+        opt: { pos_class: '1', neg_class: '0', attributes: 4, delim: ',' }
+    }
+]
 
-if (true) {
-    /*
-        patient_age, operation_year (i.e., year - 1900), axillary nodes detected
-        class: 1 if patient survived 5+ years, 0 if patient died within 5 years
-    */
-    let data_set = new DataSet('data/haberman.txt', {
-        pos_class : '1',
-        neg_class : '2',
-        attributes: 3,
-        delim     : ',',
-    })
-
-    data_set.load().test(1)
-} else {
-    /*
-        recency(months), frequency (times), monetary (c.c. blood), time (months)
-        outcome: whether (s)he donated blood in March 2007 (binary class)
-    */
-    let data_set = new DataSet('data/transfusion.txt', {
-        pos_class : '1',
-        neg_class : '0',
-        attributes: 4,
-        delim     : ',',
-    })
-
-    data_set.load().test(3)
-}
+pairs.forEach(set => {
+    console.log('TESTING:' + set.file)
+    for (let i = 1; i <= 7; i += 2) {
+        console.log('NN=' + i)
+        console.log('(random)')
+        new DataSet(set.file, set.opt).load().test(i)
+        console.log('(tomek_links)')
+        new DataSet(set.file, set.opt).load().test_with_remove(i)
+    }
+})
