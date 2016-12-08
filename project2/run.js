@@ -2,13 +2,17 @@ import DataSet from './dataset.js'
 
 let pairs = [
     {
+        file: 'data/vowels.txt',
+        opt: { pos_class: '0', neg_class: '1', attributes: 13, delim: ' ' }
+    }/*,
+    {
         file: 'data/haberman.txt',
         opt: { pos_class: '1', neg_class: '2', attributes: 3, delim: ',' }
     },
     {
         file: 'data/transfusion.txt',
         opt: { pos_class: '1', neg_class: '0', attributes: 4, delim: ',' }
-    }
+    }*/
 ]
 
 pairs.forEach(set => {
